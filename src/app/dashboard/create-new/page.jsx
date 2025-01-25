@@ -5,9 +5,13 @@ import SelectStyle from './_components/SelectStyle';
 import SelectDuration from './_components/SelectDuration';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
+import CustomLoading from './_components/CustomLoading';
 
 const page = () => {
     const [formData, setFormData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [videoScript, setVideoScript] = useState()
+
     const onHandleInputChange = (fieldName, fieldValue)=>{
         console.log(fieldName, fieldValue)
 
@@ -24,13 +28,16 @@ const page = () => {
     }
 
     const GetVideoScript = async () => {
+        setLoading(true)
         const prompt = "Write a script to generate "+formData.duration+" video on topic: "+formData.topic+" along with AI image prompt in "+formData.imageStyle+" format for each scene and give me result in JSON format with imagePrompt and ContentText as field,No Plain text and also i don't want scene_number and duration "
         console.log(prompt)
         const result = await axios.post("/api/get-video-script",{
             prompt:prompt
         }).then(resp=>{
-            console.log(resp.data)
+            console.log(resp.data.result);
+            setVideoScript(resp.data.result);
         })
+        setLoading(false);
     }
 
 
@@ -57,6 +64,8 @@ const page = () => {
             <Button className="mt-10 w-full" onClick={onCreateClickHandler} >Create Short Video</Button>
 
         </div>
+
+        <CustomLoading loading={loading} />
 
     </div>
   )
