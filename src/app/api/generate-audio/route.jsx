@@ -1,5 +1,7 @@
 import textToSpeech from "@google-cloud/text-to-speech";
 import { NextResponse } from "next/server";
+const fs = require('fs');
+const util = require('util');
 
 const client = new textToSpeech.TextToSpeechClient({
     apiKey:process.env.GOOGLE_API_KEY
@@ -28,6 +30,6 @@ export async function POST(req) {
   console.log('Audio content written to file: output.mp3');
 
 
-  return NextResponse.json({Result:"success"})
+  return NextResponse.json({Result:"success"});
     
 }
