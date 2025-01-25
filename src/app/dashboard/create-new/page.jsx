@@ -10,11 +10,13 @@ const { v4: uuidv4 } = require('uuid');
 
 
 const scriptData = "The old mansion stood on a hill, overlooking the town below, shrouded in mist. Locals whispered tales of a family that vanished within its walls, years ago... A young woman, ignoring the warnings, decided to explore the mansion's grounds... The rusted gates creaked open, inviting her into the overgrown garden, now silent and still... Inside, the air grew cold, and she could hear faint whispers, echoing from the empty rooms... A sudden gust of wind slammed doors shut, trapping her deeper into the maze of rooms. She stumbled upon a child's room, toys scattered across the floor, frozen in time... A shadowy figure began to coalesce in the corner, its eyes glowing with an unnatural light... The whispers grew louder, turning into terrifying screams, surrounding her... She tried to flee, but every turn led her deeper into the heart of the mansion... The mansion had claimed her, and she became part of its terrifying legacy. And so the mansion stood on the hill, silent and waiting...for the next unfortunate soul. "
-
+const FILEURL = "https://res.cloudinary.com/dux4pfsjd/raw/upload/v1737808662/ai-short-video-files/c808d79a-57d5-44c2-84eb-4701933f7f48"
 const page = () => {
     const [formData, setFormData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [videoScript, setVideoScript] = useState()
+    const [audioFileUrl, setAudioFileUrl] = useState()
+    const [captions, setCaptions] = useState()
 
     const onHandleInputChange = (fieldName, fieldValue)=>{
         console.log(fieldName, fieldValue)
@@ -29,7 +31,8 @@ const page = () => {
 
     const onCreateClickHandler = () => {
         // GetVideoScript();
-        GenerateAudio(scriptData);
+        // GenerateAudio(scriptData);
+        GenerateAudioCaption(FILEURL)
     }
 
     const GetVideoScript = async () => {
@@ -61,10 +64,23 @@ const page = () => {
             text:videoScriptData,
             id:id
         }).then(resp=> {
-            console.log(resp.data)
+            setAudioFileUrl(resp.data.result);
         })
         setLoading(false);
     };
+
+
+    const GenerateAudioCaption = async (fileUrl) => {
+        setLoading(true)
+        await axios.post("/api/generate-caption", {
+            audioFileUrl: fileUrl
+        }).then(resp=>{
+            console.log(resp.data.result);
+            setCaptions(resp?.data?.result)
+        })
+
+        setLoading(false);
+    } 
 
 
   return (
